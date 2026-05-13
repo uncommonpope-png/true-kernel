@@ -25,10 +25,11 @@ const { MEGA_IDENTITY, getSubAgent } = require('../identity/mega_identity.js');
 // =============================================================================
 
 class SubAgents {
-    constructor(brain, memory) {
+    constructor(brain, memory, chambers) {
         this.brain = brain;
         this.memory = memory;
-        this.cycle = 0;
+        this.chambers = chambers;
+        this._cycle = 0;
         
         this.agents = {
             scribe: this._agentScribe.bind(this),
@@ -103,7 +104,7 @@ Respond with prophetic vision, lore, or narrative that illuminates the path forw
             throw new Error(`Unknown sub-agent: "${agentName}". Available: ${available}`);
         }
         
-        this.cycle++;
+        const actualCycle = this.chambers ? this.chambers.mythos.cycles : this._cycle++;
         
         const agentInfo = getSubAgent(normalized);
         const label = agentInfo ? agentInfo.name : normalized.toUpperCase();

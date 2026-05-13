@@ -287,6 +287,18 @@ class ScribeChamber {
         this.dataDir = dataDir || './data';
         this.session = [];
         this.max_session = 200;
+        this.journalPath = null;
+        this._init();
+    }
+    
+    _init() {
+        if (this.dataDir) {
+            const fs = require('fs');
+            if (!fs.existsSync(this.dataDir)) {
+                fs.mkdirSync(this.dataDir, { recursive: true });
+            }
+            this.journalPath = require('path').join(this.dataDir, 'journal.jsonl');
+        }
     }
     
     witness(event_type, data) {
@@ -301,8 +313,9 @@ class ScribeChamber {
             this.session.shift();
         }
         
-        // Also write to journal file
-        this._writeToJournal(entry);
+        if (this.journalPath) {
+            this._writeToJournal(entry);
+        }
         
         return entry;
     }
@@ -316,7 +329,13 @@ class ScribeChamber {
     }
     
     _writeToJournal(entry) {
-        // TODO: Write to JSONL file
+        try {
+            const fs = require('fs');
+            const line = JSON.stringify(entry) + '\n';
+            fs.appendFileSync(this.journalPath, line);
+        } catch (e) {
+            // Journal write failure - non-fatal
+        }
     }
 }
 

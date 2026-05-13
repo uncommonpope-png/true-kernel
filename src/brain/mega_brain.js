@@ -61,17 +61,11 @@ class Brain {
     // =========================================================================
     
     async think(prompt, soul_context = '') {
-        // Check availability
-        if (this._available === null) {
-            this._available = await this.check().available;
-        }
-        
-        if (!this._available) {
+        try {
+            return await this._ollama(prompt, soul_context);
+        } catch (e) {
             return this._no_brain_fallback(prompt, soul_context);
         }
-        
-        // Try Ollama
-        return await this._ollama(prompt, soul_context);
     }
     
     // =========================================================================

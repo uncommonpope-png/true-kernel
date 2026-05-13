@@ -192,7 +192,7 @@ class GodsCouncil {
     // DELIBERATE ON A TOPIC
     // =========================================================================
     
-    deliberate(topic) {
+    async deliberate(topic) {
         this.phase = COUNCIL_PHASES.Trigger;
         this.current_topic = topic;
         this.phase_log = [];
@@ -250,12 +250,11 @@ class GodsCouncil {
         
         // Commit to memory if available
         if (this.memory) {
-            this.memory.record({
+            await this.memory.witness({
                 type: 'council_verdict',
-                summary: `Council resolved "${topic}": ${resolution}`,
-                tags: ['council', '4-gods', 'plt'],
                 weight: 0.85,
-                source: { system: 'MegaKernel', chamber: 'council' },
+                tags: ['council', '4-gods', 'plt', 'verdict'],
+                content: `Council resolved "${topic}": ${resolution}`,
             });
         }
         

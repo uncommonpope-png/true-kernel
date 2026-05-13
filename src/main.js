@@ -101,8 +101,11 @@ async function boot() {
     if (ollamaStatus.available) {
         console.log('[BOOT] [OK] Ollama connected');
         console.log(`[BOOT] [OK] Models: ${ollamaStatus.models.join(', ')}`);
+        // Ensure brain knows Ollama is available
+        brain._available = true;
     } else {
         console.log('[BOOT] [WARN] Ollama not available, using fallback');
+        brain._available = false;
     }
     
     // =========================================================================
@@ -129,7 +132,7 @@ async function boot() {
     console.log('[BOOT] Initializing 5 sub-agents...');
     
     const { SubAgents } = require('./sub_agents/mega_sub_agents.js');
-    const subAgents = new SubAgents(brain, memory);
+    const subAgents = new SubAgents(brain, memory, chambers);
     const agentList = subAgents.listAgents();
     console.log('[BOOT] [OK] Sub-agents active:', agentList.map(a => a.name).join(', '));
     
